@@ -91,6 +91,9 @@ Fallback: if deploy blocks, record a 60–90 s local demo video and submit it. A
 ## Acceptance tests (must pass)
 Health ok on live URL · deliberate "plants release CO₂" lands in **Wrong** · skipped Calvin cycle lands in **Missed** · no grammar feedback · PDF/DOCX/TXT notes → "Checked against your notes" · mic denied → clear message, typing works · 3 topics → diary table + tomorrow's priorities · `.md` download · refresh keeps sessions · invalid `MODEL_ID` → fallback answers.
 
+## Task skills (`.claude/skills/`)
+Load the matching skill before each task. Order: `/recap-setup` → `/recap-backend` ∥ (`/recap-ui-system` → `/recap-voice` → `/recap-frontend`) → integrate → `/recap-agent-skill` → `/recap-deploy-do` → `/recap-submit`. (`skills/recap-review/` is the product skill for judges — different thing.)
+
 ## Working rules for the agent
 - Build in PRD order: backend (Phase 1) and frontend (Phase 2) in parallel, then integrate, skill, README, deploy.
 - Keep it simple: no accounts, DB, or extras until all acceptance tests pass. Stretch goals are PRD §20.
