@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 124" width="240" height="248" role="img" aria-label="Recap Buddy logo: a smiling yellow face">
+  <path d="M58 16 C54 6 66 4 64 13" fill="none" stroke="#1F2A44" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60 14 C90 14 111 34 111 64 C111 96 88 116 60 116 C32 116 9 96 9 64 C9 34 30 14 60 14Z" fill="#FFD43B" stroke="#1F2A44" stroke-width="4"/>
+  <ellipse cx="30" cy="74" rx="8" ry="5" fill="#FF9DB0" opacity="0.65"/>
+  <ellipse cx="90" cy="74" rx="8" ry="5" fill="#FF9DB0" opacity="0.65"/>
+  <ellipse cx="43" cy="56" rx="6.5" ry="8.5" fill="#1F2A44"/>
+  <ellipse cx="77" cy="56" rx="6.5" ry="8.5" fill="#1F2A44"/>
+  <circle cx="45.5" cy="52.5" r="2.2" fill="#fff"/>
+  <circle cx="79.5" cy="52.5" r="2.2" fill="#fff"/>
+  <path d="M47 78 Q60 90 73 78" fill="none" stroke="#1F2A44" stroke-width="4" stroke-linecap="round"/>
+</svg>
