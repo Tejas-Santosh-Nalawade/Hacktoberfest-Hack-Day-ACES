@@ -53,6 +53,9 @@ export function ReviewSkeleton() {
           <Skeleton key={i} className="h-32 rounded-3xl" />
         ))}
       </div>
+      <p className="mt-5 text-center font-hand text-[1.35rem] text-ink-soft" role="status">
+        Gemma 4 thinks it through before answering. This can take up to a minute.
+      </p>
     </Card>
   )
 }

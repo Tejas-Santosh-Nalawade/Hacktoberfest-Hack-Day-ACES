@@ -125,7 +125,8 @@ Open-weight models are the engine of the app. Without them it does nothing.
 | Review and diary | **Gemma 4 31B Instruct** (`gemma-4-31B-it`, 256K context) | DigitalOcean Serverless Inference |
 | Automatic fallback | **gpt-oss-120b** (`openai-gpt-oss-120b`) | DigitalOcean Serverless Inference |
 
-- Every call uses temperature `0.2` and up to `3,000` output tokens.
+- Every call uses temperature `0.2`.
+- The same Gemma 4 models can also run through [Google AI Studio](https://aistudio.google.com) or fully offline with [Ollama](https://ollama.com/library/gemma4). See [Configuration](#configuration).
 - Model IDs are environment variables, so any model in the [DigitalOcean catalogue](https://docs.digitalocean.com/products/inference/details/models/) can be swapped in.
 - The grading rules live in [`backend/prompts.py`](backend/prompts.py) and are published as a reusable [Agent Skill](#agent-skill).
 
@@ -180,13 +181,52 @@ curl -s https://inference.do-ai.run/v1/models \
 
 ## Configuration
 
-The backend reads these from the environment, or from `backend/.env` locally:
+Recap Buddy can run Gemma 4 through four providers. All of them use the same OpenAI-compatible client:
 
-| Variable | Required | Default | Description |
+| `LLM_PROVIDER` | Where Gemma runs | Key | Default model, then fallback |
 |---|---|---|---|
-| `MODEL_ACCESS_KEY` | Yes | none | DigitalOcean Serverless Inference key. **Never commit it.** |
-| `MODEL_ID` | No | `gemma-4-31B-it` | Primary model |
-| `FALLBACK_MODEL_ID` | No | `openai-gpt-oss-120b` | Used once if the primary fails or returns invalid JSON |
+| `digitalocean` (default, used in production) | DigitalOcean Serverless Inference | `MODEL_ACCESS_KEY` | `gemma-4-31B-it`, then `openai-gpt-oss-120b` |
+| `gemini` | Google AI Studio | `GEMINI_API_KEY` | `gemma-4-26b-a4b-it`, then `gemma-4-31b-it` |
+| `lmstudio` | Your own machine, offline, via [LM Studio](https://lmstudio.ai) | none | `google/gemma-4-e4b` |
+| `ollama` | Your own machine, offline, via [Ollama](https://ollama.com) | none | `gemma4` (the e4b model) |
+
+The backend reads these from the environment, or from `backend/.env` locally (see [`.env.example`](backend/.env.example)):
+
+| Variable | Default | Description |
+|---|---|---|
+| `LLM_PROVIDER` | `digitalocean` | `digitalocean`, `gemini` or `ollama` |
+| `MODEL_ACCESS_KEY` | none | DigitalOcean key. **Never commit keys.** |
+| `GEMINI_API_KEY` | none | Google AI Studio key |
+| `LMSTUDIO_BASE_URL` | `http://localhost:1234/v1/` | Where the LM Studio server is listening |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1/` | Where Ollama is listening |
+| `MODEL_ID` | depends on provider | Primary model |
+| `FALLBACK_PROVIDER` | same as `LLM_PROVIDER` | Provider to retry on, e.g. `ollama` as an offline backup |
+| `FALLBACK_MODEL_ID` | depends on provider | Used once if the primary fails or returns invalid JSON |
+| `LLM_TIMEOUT` | `150` cloud, `400` local | Seconds to wait for a model reply |
+
+> [!NOTE]
+> Gemma 4 always reasons before it answers. The backend strips the `<thought>` block before parsing, so a review takes about a minute on Google AI Studio.
+
+### Running Gemma 4 locally with LM Studio
+
+Download **Gemma 4 E4B** in LM Studio (`lmstudio-community/gemma-4-E4B-it-GGUF`, Q4_K_M, about 5.3 GB), then start the server and load the model:
+
+```bash
+lms server start --port 1234
+lms load google/gemma-4-e4b --context-length 16384 --gpu max
+```
+
+Set `LLM_PROVIDER=lmstudio` in `backend/.env`. You can also add `FALLBACK_PROVIDER=gemini` to fall back to the cloud. Then restart the backend.
+
+On a laptop RTX 3050 (4 GB) with full GPU offload, a review takes about a minute (about 22 tokens/s) and a diary about 15 seconds. Notes longer than about 36,000 characters are trimmed so that the prompt, the notes and Gemma's reasoning all fit in the 16K context.
+
+### Running Gemma 4 locally with Ollama
+
+```bash
+ollama pull gemma4            # about 7 GB, the e4b model; use gemma4:e2b on low-memory machines
+```
+
+Then set `LLM_PROVIDER=ollama` in `backend/.env` and restart the backend.
 
 Limits: topic ≤ 120 characters, explanation ≥ 15 words, notes ≤ 10&nbsp;MB (text over 80,000 characters is trimmed).
 

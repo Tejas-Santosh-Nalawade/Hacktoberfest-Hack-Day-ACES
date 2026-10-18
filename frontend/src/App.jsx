@@ -278,7 +278,8 @@ export default function App() {
         </div>
 
         <footer className="no-print mx-auto w-full max-w-[1180px] px-4 pb-8 pt-2 text-center text-sm text-ink-soft sm:px-6">
-          Reviews by the open-weight <strong className="font-bold text-ink">{health?.model ?? 'Gemma'}</strong> model on DigitalOcean. MIT licensed,{' '}
+          Reviews by the open-weight <strong className="font-bold text-ink">{health?.model ?? 'Gemma'}</strong> model
+          {health?.provider_label ? ` via ${health.provider_label}` : ''}. MIT licensed,{' '}
           <a href={REPO_URL} target="_blank" rel="noreferrer" className="font-bold text-pen underline-offset-2 hover:underline focus-ring">
             source on GitHub
           </a>

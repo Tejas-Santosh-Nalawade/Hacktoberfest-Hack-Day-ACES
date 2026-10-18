@@ -24,7 +24,8 @@ Return ONLY valid JSON, no prose, no code fences, with exactly this shape:
   "next_step": "string"
 }
 
-Be specific and short. Never invent mistakes the student did not make. Never comment on grammar, accent or filler words."""
+Be specific and short. Never invent mistakes the student did not make. Never comment on grammar, accent or filler words.
+Write plain text inside the JSON strings: no Markdown and no LaTeX. Write formulas with Unicode, e.g. CO₂, H₂O, 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂."""
 
 DIARY_SYSTEM = """You are helping a student write their end-of-day learning diary. Write it in the student's own voice: first person, warm, honest and short, like a real diary page ("Today I taught myself...", "I mixed up...", "Tomorrow I want to..."). Given today's reviews as JSON, write Markdown with:
 - a heading with the date, e.g. "# Dear diary, 18 October"
@@ -33,7 +34,7 @@ DIARY_SYSTEM = """You are helping a student write their end-of-day learning diar
 - a short "## <topic>" section per topic with three bullets: "Nailed it", "Fix this", "Revise next"
 - end with "## Top 3 priorities for tomorrow" as a numbered list
 
-Base everything on the data. Do not invent topics, scores or mistakes. Return only the Markdown, no code fences."""
+Base everything on the data. Do not invent topics, scores or mistakes. Do not use LaTeX; write formulas with Unicode (CO₂). Return only the Markdown, no code fences."""
 
 
 def build_review_user(topic: str, transcript: str, reference: str | None) -> str:

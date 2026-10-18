@@ -7,6 +7,8 @@ class HealthResponse(BaseModel):
     status: str
     model: str
     fallback_model: str
+    provider: str = ""
+    provider_label: str = ""
 
 
 class ExtractResponse(BaseModel):
