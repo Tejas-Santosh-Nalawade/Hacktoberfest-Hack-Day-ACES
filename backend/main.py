@@ -22,7 +22,7 @@ from schemas import (  # noqa: E402
 app = FastAPI(title="Recap Buddy API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "https://recapbuddy.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
