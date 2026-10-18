@@ -1,0 +1,37 @@
+so we have to complete  the task for https://www.mlh.com/events/hacktoberfest-hack-day-pune-x-aces-association-of-computer-engineering-students
+
+and we have 2 hrs for it and  here is what we are planning 
+
+we plann to use the digital ocean categorie for our plaatform 
+
+so here is the idea
+Recap buddy
+
+context : students face issues Face issues: some students are able to learn new topics by explaining them. Certain types of students have the ability that, if they learn a new concept and explain it to someone else (like teaching that concept), they are able to understand it and memorize the entire concept.
+
+There are some other students who face issues. They revise 4 to 5 concepts each day but at the end of the day they are not able to recap all the concepts or extract the most from the concepts that they have revised.
+
+They have to face a particular issue when they are revising by teaching someone else or want to get a recap of what all they have learned. There is no one to whom they can explain the topics. Even if someone is present he may lack the knowledge or ability to understand what all concepts he has explained are right, what all concepts are wrong, and what topics or definitions the particular candidate or student has missed. 
+
+Task:
+In order to solve this issue we propose building a website or an application that uses DigitalOcean AI models or open-source models from DigitalOcean. It hears, or the user provides concepts or topics that he has learned in the form of a PDF, or if the concepts are general-knowledge-based, like photosynthesis.
+In such cases even if the documents are not provided, it uses its own intelligence or web knowledge available on the internet to check:
+- what all concepts he has told are correct
+- what topics he has missed
+- what all he has got wrong
+It gives a review of it to the student using it.
+It will be as follows:
+1. The students provide the information or knowledge from sources like PDF or doc files and may or may not provide context.
+2. At that time it will use resources from the internet or its own LLM to judge the student's explanation that he will provide through real-time voice input: what he has revised, what recap is there, or what topic he has learned in a teaching format.
+3. Do not judge the grammar and do not find any grammatical mistakes. It should aim at the main topics or concepts the students have explained.
+4. Based on that a review will be generated of:
+- what all concepts have been right and well explained
+- what misses or mistakes were there
+- what concepts were completely wrong
+- what topics or concepts were missed and may be included or can be included
+5. Based on that generate a log file or a report at the end of the day or on the request of the student. It tells, for all the concepts of that day, what the review was, just like a summary or a diary page.
+
+constraints:
+1. It is to be built in 2 hours.
+2. We have a team of 2 members only.
+3. We have to use open source or resources from Digital Ocean and from the link provided at the start.
