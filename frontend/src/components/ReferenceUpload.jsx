@@ -1,5 +1,5 @@
+import { CircleNotch, FileText, Paperclip, X } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
-import { FileText, Loader2, Upload, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { extractFile } from '../api'
 
@@ -15,8 +15,8 @@ export default function ReferenceUpload({ reference, onChange }) {
   async function handle(file) {
     if (!file) return
     setError('')
-    if (!/\.(pdf|docx|txt)$/i.test(file.name)) return setError('Upload a PDF, DOCX or TXT file.')
-    if (file.size > MAX_BYTES) return setError('That file is larger than 10 MB.')
+    if (!/\.(pdf|docx|txt)$/i.test(file.name)) return setError('That file type won’t work. Use a PDF, DOCX or TXT.')
+    if (file.size > MAX_BYTES) return setError('That file is over 10 MB. Try a shorter set of notes.')
     setBusy(true)
     try {
       const res = await extractFile(file)
@@ -30,35 +30,36 @@ export default function ReferenceUpload({ reference, onChange }) {
   }
 
   return (
-    <div className="mt-4">
-      <p className="mb-1.5 text-sm font-medium text-zinc-900">
-        Your notes <span className="font-normal text-zinc-400">— optional</span>
+    <div className="mt-6">
+      <p className="mb-2 font-display text-[15px] font-semibold">
+        Got notes? <span className="font-sans font-normal text-ink-soft">I’ll check you against them. Optional.</span>
       </p>
       <AnimatePresence mode="wait" initial={false}>
         {reference ? (
           <motion.div
             key="chip"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5"
+            initial={{ opacity: 0, scale: 0.96, rotate: -2 }}
+            animate={{ opacity: 1, scale: 1, rotate: -1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ type: 'spring', duration: 0.4, bounce: 0.3 }}
+            className="relative flex items-center gap-3 rounded-2xl border-2 border-ink bg-sticky-50 px-4 py-3 shadow-chunky-sm"
           >
-            <FileText className="size-4 shrink-0 text-indigo-600" aria-hidden />
-            <div className="min-w-0 flex-1 text-sm">
-              <p className="truncate font-medium text-zinc-900">{reference.filename}</p>
-              <p className="text-xs text-zinc-500">
-                Notes loaded · {reference.pages ? `${reference.pages} page${reference.pages === 1 ? '' : 's'} · ` : ''}
-                {reference.chars.toLocaleString()} chars{reference.truncated && ' (trimmed)'}
+            <Paperclip className="absolute -top-3 left-5 size-7 -rotate-12 text-ink" weight="bold" aria-hidden />
+            <FileText className="size-6 shrink-0 text-sticky-700" weight="duotone" aria-hidden />
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-bold">{reference.filename}</p>
+              <p className="text-sm text-ink-soft">
+                Notes loaded{reference.pages ? `, ${reference.pages} page${reference.pages === 1 ? '' : 's'}` : ''}
+                {reference.truncated && ' (I read the first part)'}
               </p>
             </div>
             <button
               type="button"
               onClick={() => onChange(null)}
               aria-label="Remove notes"
-              className="rounded-md p-1 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
+              className="press grid size-9 place-items-center rounded-xl border-2 border-transparent text-ink-soft hover:border-ink hover:bg-white hover:text-ink focus-ring"
             >
-              <X className="size-4" />
+              <X className="size-4" weight="bold" />
             </button>
           </motion.div>
         ) : (
@@ -66,9 +67,9 @@ export default function ReferenceUpload({ reference, onChange }) {
             key="drop"
             type="button"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 1, scale: drag ? 1.02 : 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ type: 'spring', duration: 0.3, bounce: 0.3 }}
             disabled={busy}
             onClick={() => input.current?.click()}
             onDragOver={(e) => {
@@ -81,17 +82,21 @@ export default function ReferenceUpload({ reference, onChange }) {
               setDrag(false)
               handle(e.dataTransfer.files?.[0])
             }}
-            className={`flex w-full items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-4 text-sm transition-colors
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40
-              ${drag ? 'border-indigo-400 bg-indigo-50/60 text-indigo-700' : 'border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-50'}`}
+            className={`flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-4 py-5 text-[15px] font-semibold
+              transition-colors duration-150 focus-ring
+              ${drag ? 'border-pen bg-pen-50 text-pen-dark' : 'border-ink/30 bg-white/70 text-ink-soft hover:border-ink hover:text-ink'}`}
           >
-            {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Upload className="size-4" aria-hidden />}
-            {busy ? 'Reading your notes…' : 'Drop a PDF, DOCX or TXT — or click to browse'}
+            {busy ? (
+              <CircleNotch className="size-5 animate-spin" weight="bold" aria-hidden />
+            ) : (
+              <Paperclip className="size-5" weight="bold" aria-hidden />
+            )}
+            {busy ? 'Reading your notes…' : drag ? 'Drop it here' : 'Drop a PDF, DOCX or TXT, or click to choose'}
           </motion.button>
         )}
       </AnimatePresence>
       <input ref={input} type="file" accept={ACCEPT} className="hidden" onChange={(e) => handle(e.target.files?.[0])} />
-      {error && <p className="mt-1.5 text-sm text-rose-600">{error}</p>}
+      {error && <p className="mt-2 text-sm font-semibold text-redpen-700">{error}</p>}
     </div>
   )
 }

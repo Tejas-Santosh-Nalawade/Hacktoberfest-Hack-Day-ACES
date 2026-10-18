@@ -1,61 +1,166 @@
 @import "tailwindcss";
 
+/* Recap Buddy — "school supplies" palette:
+   exercise-book paper, ballpoint ink, green tick, highlighter, red pen, sticky notes. */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --font-display: "Fredoka", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Caveat", cursive;
+
+  --color-paper: #fbfcff;
+  --color-grid: #e8eef9;
+  --color-rule: #cddcf2;
+  --color-ink: #1f2a44;
+  --color-ink-soft: #55607a;
+  --color-ink-faint: #8a93a8;
+
+  --color-pen: #2f5bff;
+  --color-pen-dark: #1f40d6;
+  --color-pen-50: #eaf0ff;
+  --color-sun: #ffd43b;
+  --color-sun-50: #fff8d6;
+
+  --color-tick-50: #e3f7ec;
+  --color-tick-500: #2fb36b;
+  --color-tick-700: #17784a;
+
+  --color-hi-50: #fff6c7;
+  --color-hi-300: #ffe45c;
+  --color-hi-700: #6e5300;
+
+  --color-redpen-50: #ffeaea;
+  --color-redpen-500: #e5484d;
+  --color-redpen-700: #b4232a;
+
+  --color-sticky-50: #e8f4ff;
+  --color-sticky-200: #c4e3ff;
+  --color-sticky-700: #1c5a99;
+
+  --shadow-chunky: 0 4px 0 var(--color-ink);
+  --shadow-chunky-sm: 0 2px 0 var(--color-ink);
+  --shadow-sticky: 0 6px 14px -6px rgb(28 90 153 / 0.45);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @layer base {
   html {
-    font-size: 15px;
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-white text-zinc-600 font-sans;
+    @apply bg-paper text-ink font-sans text-[16px];
+    /* exercise-book graph paper */
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
   }
 
   h1, h2, h3 {
-    @apply text-zinc-900 font-semibold tracking-tight;
+    @apply font-display text-ink font-semibold;
+    text-wrap: balance;
   }
+
+  p { text-wrap: pretty; }
+
+  button, a, input, textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection { background: var(--color-hi-300); }
 }
 
-/* faint hero glow behind the header */
-.hero-glow {
-  background: radial-gradient(60% 120px at 50% 0%, rgba(79, 70, 229, 0.08), transparent);
+@layer components {
+  .skip-link {
+    @apply absolute left-3 top-3 z-50 -translate-y-20 rounded-xl border-2 border-ink bg-sun px-3 py-2 font-display font-semibold;
+  }
+  .skip-link:focus { @apply translate-y-0; }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-pen/30;
+  }
+
+  /* chunky press: the hard shadow collapses as the button goes down */
+  .press {
+    transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out), background-color 150ms ease;
+  }
+  .press:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--color-ink);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lift:hover:not(:disabled) { transform: translateY(-2px); }
+  }
+
+  /* ruled notebook paper with a red margin line */
+  .ruled {
+    --line: 32px;
+    position: relative;
+    background-color: #fff;
+    background-image: repeating-linear-gradient(transparent 0 calc(var(--line) - 1px), var(--color-rule) calc(var(--line) - 1px) var(--line));
+    background-position: 0 14px;
+  }
+  .ruled::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 2.6rem;
+    width: 2px;
+    background: color-mix(in srgb, var(--color-redpen-500) 45%, transparent);
+    pointer-events: none;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-grid;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.8), transparent);
+    animation: shimmer 1.3s infinite;
+  }
+
+  /* washi tape */
+  .tape {
+    background: repeating-linear-gradient(45deg, rgb(255 212 59 / 0.75) 0 8px, rgb(255 228 92 / 0.55) 8px 16px);
+  }
 }
 
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
 
-.skeleton {
-  @apply relative overflow-hidden rounded-md bg-zinc-100;
+/* diary page markdown, written in the student's notebook */
+.diary h1, .diary h2 {
+  @apply font-hand text-pen-dark font-bold leading-none;
 }
-.skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
-  animation: shimmer 1.4s infinite;
-}
+.diary h1 { @apply mb-4 text-[2.4rem]; }
+.diary h2 { @apply mt-7 mb-2 text-[2rem]; }
+.diary h3 { @apply mt-5 mb-1 font-display text-lg; }
+.diary p { @apply my-2 leading-8; }
+.diary ul { @apply my-2 list-disc space-y-1 pl-5 leading-8; }
+.diary ol { @apply my-2 list-decimal space-y-1 pl-5 leading-8; }
+.diary strong { @apply font-extrabold text-ink; }
+.diary table { @apply my-4 w-full border-separate border-spacing-0 overflow-hidden rounded-xl border-2 border-ink bg-white text-[15px]; }
+.diary th { @apply bg-sun-50 px-3 py-2 text-left font-display font-semibold; border-bottom: 2px solid var(--color-ink); }
+.diary td { @apply px-3 py-2 align-top; border-bottom: 1px solid var(--color-grid); }
+.diary tr:last-child td { border-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after { animation: none; }
+  html { scroll-behavior: auto; }
 }
 
-/* diary markdown */
-.prose-diary h1 { @apply text-2xl mb-4; }
-.prose-diary h2 { @apply text-lg mt-8 mb-2; }
-.prose-diary h3 { @apply text-base mt-5 mb-1; }
-.prose-diary p { @apply my-2 leading-relaxed; }
-.prose-diary ul { @apply list-disc pl-5 my-2 space-y-1; }
-.prose-diary ol { @apply list-decimal pl-5 my-2 space-y-1; }
-.prose-diary strong { @apply text-zinc-900 font-semibold; }
-.prose-diary table { @apply w-full text-sm my-4 border border-zinc-200 rounded-lg overflow-hidden border-separate border-spacing-0; }
-.prose-diary th { @apply bg-zinc-50 text-left font-medium text-zinc-900 px-3 py-2 border-b border-zinc-200; }
-.prose-diary td { @apply px-3 py-2 border-b border-zinc-100; }
-.prose-diary tr:last-child td { @apply border-b-0; }
+@media print {
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .print-page { box-shadow: none !important; border: 0 !important; }
+}

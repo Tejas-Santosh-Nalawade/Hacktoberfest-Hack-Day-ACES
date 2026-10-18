@@ -1,70 +1,48 @@
-import { AnimatePresence, motion } from 'motion/react'
-import { Mic, MicOff, Square } from 'lucide-react'
-import Button from './ui/Button'
+import { Microphone, MicrophoneSlash, Stop } from '@phosphor-icons/react'
+import { motion, useTransform } from 'motion/react'
 
-function Bars() {
-  return (
-    <span className="flex h-4 items-end gap-0.5" aria-hidden>
-      {[0, 1, 2, 3, 4].map((i) => (
-        <motion.span
-          key={i}
-          className="w-0.5 rounded-full bg-rose-500"
-          animate={{ height: ['30%', '100%', '45%', '80%', '30%'] }}
-          transition={{ duration: 1, repeat: Infinity, delay: i * 0.12, ease: 'easeInOut' }}
-        />
-      ))}
-    </span>
-  )
+function Ring({ level, i }) {
+  const scale = useTransform(level, [0, 1], [1, 1.35 + i * 0.3])
+  const opacity = useTransform(level, [0, 0.05, 1], [0, 0.45 - i * 0.1, 0.7 - i * 0.15])
+  return <motion.span style={{ scale, opacity }} className="absolute inset-0 rounded-full bg-redpen-500" aria-hidden />
 }
 
-export default function VoiceRecorder({ supported, listening, error, onStart, onStop }) {
+export default function VoiceRecorder({ supported, listening, error, level, onStart, onStop }) {
   if (!supported) {
     return (
-      <p className="flex items-center gap-2 rounded-lg bg-zinc-50 px-3 py-2 text-sm text-zinc-500">
-        <MicOff className="size-4" aria-hidden />
-        Voice works in Chrome or Edge — you can type below.
+      <p className="flex items-center gap-2 rounded-2xl border-2 border-dashed border-ink/30 bg-white px-4 py-3 text-[15px] text-ink-soft">
+        <MicrophoneSlash className="size-5 shrink-0" weight="bold" aria-hidden />
+        Voice works in Chrome or Edge. You can type your explanation below instead.
       </p>
     )
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      {listening ? (
-        <Button variant="secondary" onClick={onStop}>
-          <Square className="size-3.5 fill-current" aria-hidden />
-          Stop
-        </Button>
-      ) : (
-        <Button onClick={onStart}>
-          <Mic className="size-4" aria-hidden />
-          Start teaching
-        </Button>
-      )}
-
-      <AnimatePresence>
-        {listening && (
+    <div className="flex flex-col items-center gap-3 py-2">
+      <div className="relative grid size-24 place-items-center">
+        {listening && [0, 1, 2].map((i) => <Ring key={i} level={level} i={i} />)}
+        <button
+          type="button"
+          onClick={listening ? onStop : onStart}
+          aria-label={listening ? 'Stop teaching' : 'Start teaching'}
+          aria-pressed={listening}
+          className={`press relative grid size-24 place-items-center rounded-full border-2 border-ink shadow-chunky focus-ring
+            ${listening ? 'bg-redpen-500 text-white' : 'bg-pen text-white hover:bg-pen-dark'}`}
+        >
           <motion.span
-            initial={{ opacity: 0, x: -4 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0 }}
-            className="flex items-center gap-2 text-sm text-zinc-600"
-            role="status"
+            key={listening ? 'stop' : 'mic'}
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', duration: 0.35, bounce: 0.4 }}
           >
-            <span className="relative flex size-2.5">
-              <motion.span
-                className="absolute inset-0 rounded-full bg-rose-500/60"
-                animate={{ scale: [1, 2.2], opacity: [0.7, 0] }}
-                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
-              />
-              <span className="relative size-2.5 rounded-full bg-rose-500" />
-            </span>
-            Listening
-            <Bars />
+            {listening ? <Stop className="size-9" weight="fill" /> : <Microphone className="size-10" weight="fill" />}
           </motion.span>
-        )}
-      </AnimatePresence>
-
-      {error && <p className="w-full text-sm text-rose-600">{error}</p>}
+        </button>
+      </div>
+      <p className="font-display text-[15px] font-semibold text-ink" role="status">
+        {listening ? 'I’m listening. Tap to stop.' : 'Tap the mic and explain it like I’m new to it'}
+      </p>
+      {error && <p className="text-center text-sm font-semibold text-redpen-700">{error}</p>}
     </div>
   )
 }

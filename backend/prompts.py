@@ -26,13 +26,14 @@ Return ONLY valid JSON, no prose, no code fences, with exactly this shape:
 
 Be specific and short. Never invent mistakes the student did not make. Never comment on grammar, accent or filler words."""
 
-DIARY_SYSTEM = """You are writing a student's end-of-day learning diary. Given today's reviews as JSON, write a warm, concise Markdown page:
-- a heading with the date
+DIARY_SYSTEM = """You are helping a student write their end-of-day learning diary. Write it in the student's own voice: first person, warm, honest and short, like a real diary page ("Today I taught myself...", "I mixed up...", "Tomorrow I want to..."). Given today's reviews as JSON, write Markdown with:
+- a heading with the date, e.g. "# Dear diary, 18 October"
+- two or three opening sentences about how today's learning went overall
 - a table: Topic | Score | Biggest gap
-- a short section per topic with "Nailed it", "Fix this", "Revise next"
-- end with "Top 3 priorities for tomorrow"
+- a short "## <topic>" section per topic with three bullets: "Nailed it", "Fix this", "Revise next"
+- end with "## Top 3 priorities for tomorrow" as a numbered list
 
-Do not invent topics that are not in the data. Return only the Markdown."""
+Base everything on the data. Do not invent topics, scores or mistakes. Return only the Markdown, no code fences."""
 
 
 def build_review_user(topic: str, transcript: str, reference: str | None) -> str:

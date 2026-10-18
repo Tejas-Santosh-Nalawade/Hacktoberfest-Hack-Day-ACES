@@ -1,17 +1,11 @@
-import { motion } from 'motion/react'
-import { fadeUp } from './motion'
-
-export default function Card({ step, title, action, className = '', children }) {
+export default function Card({ step, title, action, className = '', children, ...props }) {
   return (
-    <motion.section
-      {...fadeUp}
-      className={`rounded-xl border border-zinc-200 bg-white p-5 shadow-soft sm:p-6 ${className}`}
-    >
+    <section className={`rounded-[28px] border-2 border-ink bg-white p-5 shadow-chunky sm:p-7 ${className}`} {...props}>
       {(title || action) && (
-        <header className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="flex items-center gap-2.5 text-base">
+        <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="flex items-center gap-3 text-xl">
             {step && (
-              <span className="grid size-6 place-items-center rounded-full bg-zinc-100 font-mono text-xs text-zinc-600">
+              <span className="grid size-8 place-items-center rounded-full border-2 border-ink bg-sun text-[15px] leading-none">
                 {step}
               </span>
             )}
@@ -21,6 +15,6 @@ export default function Card({ step, title, action, className = '', children }) 
         </header>
       )}
       {children}
-    </motion.section>
+    </section>
   )
 }
